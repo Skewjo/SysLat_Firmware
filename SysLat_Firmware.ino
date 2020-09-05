@@ -163,9 +163,11 @@ void loop() {
     Serial.flush();
     
     for(int i = 0; i <= numberOfReadings; i++){
-        Serial.print(arduinoClockBegin);
+        Serial.print(arduinoClockBegin[i]);
         Serial.print(" ");
-        Serial.println(arduinoClockEnd);
+        Serial.println(arduinoClockEnd[i]);
+        delay(10);
+        Serial.flush();
     }
     
     if(timeoutCounter >= 3){
