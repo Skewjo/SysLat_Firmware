@@ -7,19 +7,15 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 const int whiteSensorPin = A2;
 
-
 const int shortDelay = 10;
 const int midDelay = 100;
 const int longDelay = 500;
 const int millisTimeout = 500;
 
-
 int whiteSensorValue = 0;
 int whiteSensorAccept = 900;
 int whiteCalibrate = 0;
 int timeoutCounter = 0;
-
-
 
 unsigned long millisBegin, millisEnd, millisTotal;
 
@@ -68,12 +64,7 @@ void loop() {
             whiteCalibrate++;
         }
 
-        Serial.flush();
-        delay(midDelay);
-        Serial.write("B");
-        delay(longDelay);
-        Serial.flush();
-        
+        SendB();
         SendData(millisBegin, millisEnd, millisTotal);
     }
     
@@ -94,7 +85,7 @@ void loop() {
             timeoutCounter = 0;
         }
         
-        //The following statement assumes that you will not have a sub-2 millisecond input lag, but some systems may currently be capable...
+        //The following statement assumes that you will not have a sub-2 millisecond input lag, but some systems may currently be capable...maybe? IDK.
         if (millisTotal <= 1) {
             timeoutCounter++;
             lcd.setCursor(0, 0);
@@ -106,17 +97,10 @@ void loop() {
             lcd.print("Timeout     ");
         }
         
-        //possibly move this first flush to directly after "millisTotal" calculation so that we can possibly get rid of the first delay?
-        Serial.flush();
-        delay(midDelay);
-        Serial.write("B");
-        delay(longDelay);
-        Serial.flush();
+        SendB();
 
         SendData(millisBegin, millisEnd, millisTotal);
     }
-    
-
     
     if(timeoutCounter >= 3){
         lcd.clear();
@@ -124,11 +108,12 @@ void loop() {
         delay(longDelay);
     }
     
-    reset();
-
-    
-    
+    reset();    
 }
+
+
+
+
 
 void timeTheFlash(){
         millisBegin = millis();
@@ -140,6 +125,15 @@ void timeTheFlash(){
         }
         millisEnd = millis();
         millisTotal = millisEnd - millisBegin;
+}
+
+void sendB(){
+        //possibly move this first flush to directly after "millisTotal" calculation so that we can possibly get rid of the first delay?
+        Serial.flush();
+        delay(midDelay);
+        Serial.write("B");
+        delay(longDelay);
+        Serial.flush();
 }
 
 void sendData(unsigned long millisBegin, unsigned long millisEnd, unsigned long millisTotal){
