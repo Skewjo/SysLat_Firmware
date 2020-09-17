@@ -6,34 +6,23 @@
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 const int whiteSensorPin = A2;
-const int totalReadings = 10;
+
 
 const int shortDelay = 10;
 const int midDelay = 100;
 const int longDelay = 500;
+const int millisTimeout = 500;
 
 
 int whiteSensorValue = 0;
 int whiteSensorAccept = 900;
 int whiteCalibrate = 0;
 int timeoutCounter = 0;
-int millisTimeout = 500;
-int numberOfReadings = 0;
-
-//TABLES
-//From StackOverflow: If your array has static storage allocation, it is default initialized to zero. 
-//However, if the array has automatic storage allocation, then you can simply initialize all its elements to zero using an array initializer list which contains a zero. 
-//I think this means we'll need to check the compiler and/or the board we end up using to ensure that it uses static storage allocation...not sure
-long arduinoClockBegin[totalReadings];
-long arduinoClockEnd[totalReadings];
-
-
-
 
 
 
 unsigned long millisBegin, millisEnd, millisTotal;
-unsigned long millisTest1;
+
 
 void setup() {
     // put your setup code here, to run once:
@@ -50,27 +39,29 @@ void loop() {
     //calibration loop
     while (whiteCalibrate < 2) {
         int i = 0;
+        whiteSensorValue = 0;
+        
         lcd.setCursor(0, 0);
         lcd.print("Calibrating");
 
-        whiteSensorValue = 0;
+        
         millisBegin = millis();
         Serial.write("A");
-        millisTest1 = millis();
         while (whiteSensorValue < whiteSensorAccept && i < millisTimeout) {
             delay(1);
             whiteSensorValue = analogRead(whiteSensorPin);
-            lcd.setCursor(12, 1);
-            lcd.print(whiteSensorValue);
             i++;
         }
         millisEnd = millis();
         millisTotal = millisEnd - millisBegin;
 
+        lcd.setCursor(12, 1);
+        lcd.print(whiteSensorValue);
+        
         if (millisTotal <= 3) {
             delay(midDelay);
             whiteCalibrate = 0;
-            //I believe if the accept value is incremented by an odd/prime number, it will make it less likely to get hung.
+            //I believe if the accept value is incremented by an odd/prime number, it will make it less likely to get hung and it will be more accurate
             whiteSensorAccept = whiteSensorAccept + 3;
             lcd.setCursor(0, 1);
             lcd.print(whiteSensorAccept);
@@ -85,25 +76,27 @@ void loop() {
         else {
             whiteCalibrate++;
         }
+
+        
         Serial.flush();
         delay(midDelay);
         Serial.write("B");
         delay(longDelay);
         Serial.flush();
+
+        
+        Serial.print(millisBegin);
+        Serial.print(" ");
+        Serial.print(millisEnd);
+        Serial.print(" ");
+        Serial.println(millisTotal);
+        delay(longDelay);
+        Serial.flush();
+        
     }
     
-    //After calibration, send over the current clock time for data synchronization
-    int startMillis = millis();
-    Serial.write("C");
-    delay(shortDelay);
-    Serial.flush();
-    Serial.write(startMillis);
-    delay(shortDelay);
-    Serial.flush();
-    
-    
     //work loop
-    while (timeoutCounter < 3 && numberOfReadings < totalReadings) {
+    while (timeoutCounter < 3) {
         int i = 0;
         whiteSensorValue = 0;
 
@@ -116,16 +109,6 @@ void loop() {
         }
         millisEnd = millis();
         millisTotal = millisEnd - millisBegin;
-
-        //Serial.print(millisTotal);
-        //Serial.write(millisTotal);
-        
-        //Add data to tables
-        arduinoClockBegin[numberOfReadings] = millisBegin;
-        arduinoClockEnd[numberOfReadings] = millisEnd;
-        
-
-        
         
         lcd.setCursor(0, 0);
 
@@ -155,30 +138,17 @@ void loop() {
         Serial.write("B");
         delay(longDelay);
         Serial.flush();
-        numberOfReadings++;
-    }
-    
-    //Write back ending clock time
-    int endMillis = millis();
-    Serial.write("D");
-    delay(shortDelay);
-    Serial.flush();
-    Serial.write(endMillis);
-    delay(shortDelay);
-    Serial.flush();
-    
-    for(int i = 0; i <= numberOfReadings; i++){
-        Serial.print(arduinoClockBegin[i]);
+
+        Serial.print(millisBegin);
         Serial.print(" ");
-        Serial.println(arduinoClockEnd[i]);
-        delay(shortDelay);
+        Serial.print(millisEnd);
+        Serial.print(" ");
+        Serial.println(millisTotal);
+        delay(longDelay);
         Serial.flush();
     }
+    
 
-    //Write out an 'E' to signify that data transfer is complete
-    Serial.write("E");
-    delay(shortDelay);
-    Serial.flush();
     
     if(timeoutCounter >= 3){
         lcd.clear();
@@ -190,7 +160,7 @@ void loop() {
     lcd.clear();
     timeoutCounter = 0;
     whiteCalibrate = 0;
-    numberOfReadings = 0;
+
     
     
 }
