@@ -156,11 +156,14 @@ void loop() {
         delay(longDelay);
     }
     
-    //Reset
-    lcd.clear();
-    timeoutCounter = 0;
-    whiteCalibrate = 0;
+    Reset();
 
     
     
+}
+
+void Reset(){
+    lcd.clear();
+    timeoutCounter = 0;
+    whiteCalibrate = 0;
 }
