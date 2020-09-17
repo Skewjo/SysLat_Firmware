@@ -8,6 +8,11 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 const int whiteSensorPin = A2;
 const int totalReadings = 10;
 
+const int shortDelay = 10;
+const int midDelay = 100;
+const int longDelay = 500;
+
+
 int whiteSensorValue = 0;
 int whiteSensorAccept = 900;
 int whiteCalibrate = 0;
@@ -62,8 +67,8 @@ void loop() {
         millisEnd = millis();
         millisTotal = millisEnd - millisBegin;
 
-        if (millisTotal <= 5) {
-            delay(100);
+        if (millisTotal <= 3) {
+            delay(midDelay);
             whiteCalibrate = 0;
             //I believe if the accept value is incremented by an odd/prime number, it will make it less likely to get hung.
             whiteSensorAccept = whiteSensorAccept + 3;
@@ -81,19 +86,19 @@ void loop() {
             whiteCalibrate++;
         }
         Serial.flush();
-        delay(100);
+        delay(midDelay);
         Serial.write("B");
-        delay(1000);
+        delay(longDelay);
         Serial.flush();
     }
     
     //After calibration, send over the current clock time for data synchronization
     int startMillis = millis();
     Serial.write("C");
-    delay(10);
+    delay(shortDelay);
     Serial.flush();
     Serial.write(startMillis);
-    delay(10);
+    delay(shortDelay);
     Serial.flush();
     
     
@@ -146,9 +151,9 @@ void loop() {
         
         //possibly move this first flush to directly after "millisTotal" calculation so that we can possibly get rid of the first delay?
         Serial.flush();
-        delay(100);
+        delay(midDelay);
         Serial.write("B");
-        delay(500);
+        delay(longDelay);
         Serial.flush();
         numberOfReadings++;
     }
@@ -156,24 +161,29 @@ void loop() {
     //Write back ending clock time
     int endMillis = millis();
     Serial.write("D");
-    delay(10);
+    delay(shortDelay);
     Serial.flush();
     Serial.write(endMillis);
-    delay(10);
+    delay(shortDelay);
     Serial.flush();
     
     for(int i = 0; i <= numberOfReadings; i++){
         Serial.print(arduinoClockBegin[i]);
         Serial.print(" ");
         Serial.println(arduinoClockEnd[i]);
-        delay(10);
+        delay(shortDelay);
         Serial.flush();
     }
+
+    //Write out an 'E' to signify that data transfer is complete
+    Serial.write("E");
+    delay(shortDelay);
+    Serial.flush();
     
     if(timeoutCounter >= 3){
         lcd.clear();
         lcd.write("Timeout    ");
-        delay(500);
+        delay(longDelay);
     }
     
     //Reset
