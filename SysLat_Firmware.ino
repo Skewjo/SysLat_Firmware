@@ -77,22 +77,13 @@ void loop() {
             whiteCalibrate++;
         }
 
-        
         Serial.flush();
         delay(midDelay);
         Serial.write("B");
         delay(longDelay);
         Serial.flush();
-
         
-        Serial.print(millisBegin);
-        Serial.print(" ");
-        Serial.print(millisEnd);
-        Serial.print(" ");
-        Serial.println(millisTotal);
-        delay(longDelay);
-        Serial.flush();
-        
+        SendData(millisBegin, millisEnd, millisTotal);
     }
     
     //work loop
@@ -139,13 +130,7 @@ void loop() {
         delay(longDelay);
         Serial.flush();
 
-        Serial.print(millisBegin);
-        Serial.print(" ");
-        Serial.print(millisEnd);
-        Serial.print(" ");
-        Serial.println(millisTotal);
-        delay(longDelay);
-        Serial.flush();
+        SendData(millisBegin, millisEnd, millisTotal);
     }
     
 
@@ -160,6 +145,17 @@ void loop() {
 
     
     
+}
+
+
+void sendData(unsigned long millisBegin, unsigned long millisEnd, unsigned long millisTotal){
+        Serial.print(millisBegin);
+        Serial.print(" ");
+        Serial.print(millisEnd);
+        Serial.print(" ");
+        Serial.println(millisTotal);
+        delay(longDelay);
+        Serial.flush();
 }
 
 void Reset(){
