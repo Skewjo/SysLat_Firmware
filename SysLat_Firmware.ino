@@ -9,6 +9,7 @@ const int whiteSensorPin = A2;
 
 const int shortDelay = 10;
 const int midDelay = 100;
+//Sometimes when I lower the value below to 250, it works beautifully and I get like... 2 reads/second I think.  Other times it makes the average system latency appear to go up from ~15-30 to ~50-60...
 const int longDelay = 500;
 const int millisTimeout = 500;
 
@@ -130,11 +131,30 @@ void sendB(){
 }
 
 void sendData(unsigned long millisBegin, unsigned long millisEnd, unsigned long millisTotal){
-        Serial.print(millisBegin);
-        Serial.print(" ");
-        Serial.print(millisEnd);
-        Serial.print(" ");
-        Serial.println(millisTotal);
+        //Serial.print(millisBegin);
+        //Serial.print(" ");
+        //Serial.print(millisEnd);
+        //Serial.print(" ");
+        //Serial.print(millisTotal);
+
+        int num,temp,factor=1;
+
+        temp=millisTotal;
+
+        while(temp){
+          temp=temp/10;
+          factor = factor*10;
+        }
+
+        while(factor>1){
+          factor = factor/10;
+          Serial.print(millisTotal/factor);
+          Serial.flush();
+          delay(midDelay);
+          millisTotal = millisTotal % factor;
+        }
+        delay(midDelay);
+        Serial.write("C");
         delay(longDelay);
         Serial.flush();
 }
