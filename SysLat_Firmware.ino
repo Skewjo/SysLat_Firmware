@@ -31,16 +31,12 @@ void setup() {
 }
 
 void loop() {
-    
     //calibration loop
     while (whiteCalibrate < 2) {
-        int i = 0;
-        whiteSensorValue = 0;
-        
         lcd.setCursor(0, 0);
         lcd.print("Calibrating");
 
-        timeTheFlash();
+        int i = timeTheFlash();
 
         lcd.setCursor(12, 1);
         lcd.print(whiteSensorValue);
@@ -64,16 +60,13 @@ void loop() {
             whiteCalibrate++;
         }
 
-        SendB();
-        SendData(millisBegin, millisEnd, millisTotal);
+        sendB();
+        sendData(millisBegin, millisEnd, millisTotal);
     }
     
     //work loop
     while (timeoutCounter < 3) {
-        int i = 0;
-        whiteSensorValue = 0;
-
-        timeTheFlash();
+        int i = timeTheFlash();
         
         lcd.setCursor(0, 0);
 
@@ -97,9 +90,8 @@ void loop() {
             lcd.print("Timeout     ");
         }
         
-        SendB();
-
-        SendData(millisBegin, millisEnd, millisTotal);
+        sendB();
+        sendData(millisBegin, millisEnd, millisTotal);
     }
     
     if(timeoutCounter >= 3){
@@ -112,10 +104,9 @@ void loop() {
 }
 
 
-
-
-
-void timeTheFlash(){
+int timeTheFlash(){
+        int i = 0;
+        whiteSensorValue = 0;
         millisBegin = millis();
         Serial.write("A");
         while (whiteSensorValue < whiteSensorAccept && i < millisTimeout) {
@@ -125,6 +116,8 @@ void timeTheFlash(){
         }
         millisEnd = millis();
         millisTotal = millisEnd - millisBegin;
+
+        return i;
 }
 
 void sendB(){
