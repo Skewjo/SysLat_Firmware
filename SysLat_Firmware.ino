@@ -44,16 +44,7 @@ void loop() {
         lcd.setCursor(0, 0);
         lcd.print("Calibrating");
 
-        
-        millisBegin = millis();
-        Serial.write("A");
-        while (whiteSensorValue < whiteSensorAccept && i < millisTimeout) {
-            delay(1);
-            whiteSensorValue = analogRead(whiteSensorPin);
-            i++;
-        }
-        millisEnd = millis();
-        millisTotal = millisEnd - millisBegin;
+        timeTheFlash();
 
         lcd.setCursor(12, 1);
         lcd.print(whiteSensorValue);
@@ -91,15 +82,7 @@ void loop() {
         int i = 0;
         whiteSensorValue = 0;
 
-        millisBegin = millis();
-        Serial.write("A");
-        while (whiteSensorValue < whiteSensorAccept && i < millisTimeout) {
-            delay(1);
-            whiteSensorValue = analogRead(whiteSensorPin);
-            i++;
-        }
-        millisEnd = millis();
-        millisTotal = millisEnd - millisBegin;
+        timeTheFlash();
         
         lcd.setCursor(0, 0);
 
@@ -141,12 +124,23 @@ void loop() {
         delay(longDelay);
     }
     
-    Reset();
+    reset();
 
     
     
 }
 
+void timeTheFlash(){
+        millisBegin = millis();
+        Serial.write("A");
+        while (whiteSensorValue < whiteSensorAccept && i < millisTimeout) {
+            delay(1);
+            whiteSensorValue = analogRead(whiteSensorPin);
+            i++;
+        }
+        millisEnd = millis();
+        millisTotal = millisEnd - millisBegin;
+}
 
 void sendData(unsigned long millisBegin, unsigned long millisEnd, unsigned long millisTotal){
         Serial.print(millisBegin);
@@ -158,7 +152,7 @@ void sendData(unsigned long millisBegin, unsigned long millisEnd, unsigned long 
         Serial.flush();
 }
 
-void Reset(){
+void reset(){
     lcd.clear();
     timeoutCounter = 0;
     whiteCalibrate = 0;
