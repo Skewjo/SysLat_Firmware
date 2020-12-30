@@ -1,14 +1,9 @@
- /*
+/*
   REV_1: 9/17/20 - update port for PC prog update
-  11/30/20 - working with small LCD, code needs cleanup
-  12/29/20 - update for custom PCB, pin changes for LCD
+
+
 */
 #include <Time.h>
-#include <LiquidCrystal.h>
-
-// LiquidCrystal(rs, rw, enable, d4, d5, d6, d7)
-// LiquidCrystal lcd(4, 6, 8, 10, 11, 12, 13);   //this works! (adafruit itsybitsy prototype version)
-   LiquidCrystal lcd(8, 6, 4, 0, 1, 9, 5);      //syslat custom pcb version
 
 int timeoutCounter = 0;
 int numberOfReadings = 0;
@@ -30,8 +25,6 @@ const int midDelay = 100;
 const int longDelay = 500;
 const int millisTimeout = 500;
 
-unsigned long ser_cnt = 0;
-const long timeout = 5000;
 
 //long arduinoClockBegin[totalReadings];
 //long arduinoClockEnd[totalReadings];
@@ -42,19 +35,14 @@ unsigned long millisTest1;
 
 void setup() {
 
-  lcd.begin(8, 1);
-  lcd.setCursor(0, 0);
-  lcd.print("start");
-  lcd.setCursor(0, 0);
-
   // start serial port at 9600 bps and wait for port to open:
-  Serial.begin(9600); //115200
-  while ((!Serial)&&(ser_cnt < timeout)) {
-    ser_cnt++; // wait for serial port to connect. Needed for native USB port only
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
   }
-  ser_cnt = 0;
+
   // initialize digital pin LED_BUILTIN as an output.
-  //pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   // pinMode(5, INPUT);
   pinMode(IOCpin, INPUT);
 
@@ -76,8 +64,6 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(IOCpin), IOC, RISING);
   
   sei();//allow interrupts
-
-  
 }
 
 
@@ -85,7 +71,9 @@ void setup() {
 //********----------********----------********----------********----------*****------BEGIN MAIN----********----------********----------
 
 void loop() {
-    
+  
+
+  
   // if we get a valid byte, echo it
     
   /*
@@ -112,7 +100,7 @@ void loop() {
         */
         
 
-// /\/\/\/\  Above is serial echo function
+// /\/\/\/\Above is serial echo function
 
 //calibration loop
    /*
@@ -159,29 +147,30 @@ void loop() {
 
         int i = timeTheFlash();
        
-        lcd.setCursor(0, 0);
+        // Commenting all LCD code cause I don't have one yet
+        //lcd.setCursor(0, 0);
 
         if (i < millisTimeout) {
-            lcd.clear();
+//            lcd.clear();
 //            lcd.print(String(millisBegin) + String(" : ") + String(millisEnd));
-            lcd.setCursor(0, 0);
-            lcd.print(millisTotal);
+//            lcd.setCursor(0, 1);
+//            lcd.print(millisTotal);
             timeoutCounter = 0;
         }
 
         //The following statement assumes that you will not have a sub-2 millisecond input lag, but some systems may currently be capable...
         if (millisTotal <= 1) {
             timeoutCounter++;
-            lcd.setCursor(0, 0);
-            lcd.print("Too Fast");
+           // lcd.setCursor(0, 0);
+           // lcd.print("Too Fast    ");
            // Serial.print("Too Fast\r\n");    //comment this when running with program
         }
         else if (i >= millisTimeout) {
             timeoutCounter++;
-            lcd.setCursor(0, 0);
-            lcd.print("Timeout");
+          //  lcd.setCursor(0, 0);
+          //  lcd.print("Timeout     ");
         //  Serial.print("Timeout\r\n");    //comment this when running with program
-          delay(10);  Serial.flush();
+        //  delay(10);  Serial.flush();
         }
         
         //Add data to tables
@@ -195,14 +184,14 @@ void loop() {
     }
     
     if(timeoutCounter >= 3){
-        lcd.clear();
-        lcd.write("Timeout");
+      //  lcd.clear();
+      //  lcd.write("Timeout    ");
    //   Serial.println("Timeout");
         delay(longDelay);
     }
     
     //Reset
-    lcd.clear();
+ //   lcd.clear();
     timeoutCounter = 0;
 //    whiteCalibrate = 0;
     numberOfReadings = 0;
@@ -219,14 +208,11 @@ int timeTheFlash(){
     //while (whiteSensorValue < whiteSensorAccept && i < millisTimeout) {
     while((!button_flag)&&(i < millisTimeout)){
         delay(1);
-        //delayMicroseconds(1000);
         //whiteSensorValue = analogRead(whiteSensorPin);
         i++;
     }
     millisEnd = millis();
     millisTotal = millisEnd - millisBegin;
-
-    //button_flag = false;    //reset the buton flag bc I removed the interrupt
 
     return i;
 }
@@ -285,10 +271,10 @@ void pinCheck()
   //instead of pinCheck, let's use the pin interrupt and check the flag
   {
     if(button_flag == true){
-//      digitalWrite(LED_BUILTIN, HIGH); 
-//      delay(50);    
-//      digitalWrite(LED_BUILTIN, LOW);
-      //Serial.println(msg);
+      digitalWrite(LED_BUILTIN, HIGH); 
+      delay(50);    
+      digitalWrite(LED_BUILTIN, LOW);
+      Serial.println(msg);
       button_flag = false;    //reset the flag
     }
   //  pin_val = digitalRead(5);
