@@ -1,2 +1,7 @@
 # SysLat_Firmware
-Arduino firmware for SysLat project
+
+Arduino/Custom PCB firmware for SysLat project.
+
+Repo for SysLat Software for Windows can be found here: https://github.com/Skewjo/
+
+This repo in particular is a bit disorganized at the moment, but will be organized very soon.
