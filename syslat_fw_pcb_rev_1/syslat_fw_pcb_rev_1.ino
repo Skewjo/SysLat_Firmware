@@ -71,7 +71,6 @@ void loop() {
       lcd.setCursor(0, 0);
       lcd.print("Timeout");
       delay(10);
-      Serial.flush();
     }
     
     sendB();
