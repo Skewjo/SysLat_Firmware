@@ -91,9 +91,8 @@ void loop() {
 
 void timeTheFlash(){
   int i = 0;
-  Serial.write("A");
-  
   timerBegin = micros();
+  Serial.write("A");
   while((!button_flag)&&(i < 5000)){
     _delay_us(100);
     i++;
