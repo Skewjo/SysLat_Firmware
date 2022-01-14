@@ -51,7 +51,7 @@ void setup() {
 //-----------------------------------------------------------BEGIN MAIN-----------------------------------------------------------//
 void loop() {
   while (timeoutCounter < 3) {
-    timeTheFlash();
+    int i = timeTheFlash();
     
     lcd.setCursor(0, 0);
 
@@ -71,7 +71,7 @@ void loop() {
       lcd.setCursor(0, 0);
       lcd.print("Timeout");
       delay(10);
-      Serial.flush();
+      //Serial.flush();
     }
     
     sendB();
@@ -90,7 +90,7 @@ void loop() {
   timeoutCounter = 0;
 }
 
-void timeTheFlash(){
+int timeTheFlash(){
   int i = 0;
   Serial.write("A");
   
@@ -101,6 +101,8 @@ void timeTheFlash(){
   }
   timerEnd = micros();
   timerTotal = timerEnd - timerBegin;
+  
+  return i;
 }
 
 void sendB(){ //possibly move this first flush to directly after "timerTotal" calculation so that we can possibly get rid of the first delay?
