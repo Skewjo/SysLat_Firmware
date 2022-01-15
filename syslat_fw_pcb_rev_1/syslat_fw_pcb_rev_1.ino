@@ -10,7 +10,7 @@ const byte IOCpin = 7;
 bool button_flag = false;
 
 const int shortDelay = 10;
-const int midDelay = 10;
+const int midDelay = 50;
 const int longDelay = 250;//Sometimes when I lower the value below to 250, it works beautifully and I get like... 2 reads/second I think - Other times it makes the average system latency appear to go up from ~15-30 to ~50-60...
 // 3-12-21: Somehow I got this (the longDelay variable above) down to 100, but it somehow affected (it lowered it!?!?) my average system latency, which was verrrryyy strange. Now it's got me questioning whether I know anything at all.
 float f_timerTotal = 0;
