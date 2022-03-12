@@ -15,6 +15,11 @@ While there are multiple ways to "flash"(am I using this word right? probably no
 1. Download the file [syslat_fw_pcb_rev_1.ino.with_bootloader.itsybitsy32u4.hex](https://github.com/Skewjo/SysLat_Firmware/blob/master/syslat_fw_pcb_rev_1/syslat_fw_pcb_rev_1.ino.with_bootloader.itsybitsy32u4.hex)
 2. [Download and install the Arduino IDE](https://www.arduino.cc/en/software)
 3. Open the Arduino IDE
-  * Go to the "Tools" menu and choose the correct board type (in this case "AdaFruit ItsyBitsy 32u4 5V 16MHz") as shown in [this screenshot](https://imgur.com/a/xw8Wa84). 
-  * Choose the correct COM port that represents your device as shown in [this screenshot](https://imgur.com/a/lwYAbTU). Very common errors occur here, but I can't remember the exact problem so I can't find the documentation for it. If you run into an error at this step please reach out to us at [support@syslat.com](support@syslat.com).
+  * Go to **File -> Preferences -> Additional Boards Manager URLs** and enter the following URL, then press OK.
+     * https://adafruit.github.io/arduino-board-index/package_adafruit_index.json
+  * From the **Tools** menu:
+     * Go to **Board -> Boards Manager** then install **Adafruit AVR Boards**, and close the window.
+     * Then in **Board -> Adafruit Boards** choose **AdaFruit ItsyBitsy 32u4 5V 16MHz**.
+     * Under the **Port** menu choose the correct COM port that represents your device as shown in [this screenshot](https://imgur.com/a/lwYAbTU).
+        * Very common errors occur here, but I can't remember the exact problem so I can't find the documentation for it. If you run into an error at this step please reach out to us at [support@syslat.com](support@syslat.com).
   * Upload the file to the board.
